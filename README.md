@@ -1,10 +1,12 @@
 # client-python-async
-power.trade client for receiving market data updates via async (websocket) channel
+[Power Trade](power.trade) client for receiving market data updates via async (websocket) channel
 
 ## Getting Started
- - Install Python )any version above 3.10)
- - Install libraries used 
+ - Install Python (any version above 3.10)
+ - Install libraries used
+```shell 
     pip install -r requirements.txt
+```
 - Ensure the data & log folders exist in home/root directory
 ```shell
     ls data
