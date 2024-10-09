@@ -1,3 +1,4 @@
+[![Code Quality(Ruff)](https://github.com/laisee/client-python-async/actions/workflows/python-app.yml/badge.svg)](https://github.com/laisee/client-python-async/actions/workflows/python-app.yml)
 # client-python-async
 [Power Trade](power.trade) client for receiving market data updates via async (websocket) channel
 
