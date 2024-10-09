@@ -31,4 +31,4 @@ jobs:
     - name: Lint python with ruff
       run: |
         # Run ruff with similar options to flake8
-        ruff . --exit-zero --max-complexity=10 --line-length=127 --statistics
+        ruff check . --exit-zero --max-complexity=10 --line-length=127 --statistics
