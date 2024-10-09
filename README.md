@@ -1,4 +1,4 @@
-[![Code Quality(Ruff)](https://github.com/laisee/client-python-async/actions/workflows/python-app.yml/badge.svg)](https://github.com/laisee/client-python-async/actions/workflows/python-app.yml)[![Security Check(Bandit)](https://github.com/laisee/client-python-async/actions/workflows/code-security.yml/badge.svg)](https://github.com/laisee/client-python-async/actions/workflows/code-security.yml)
+[![Python Code Checks(Ruff)](https://github.com/laisee/client-python-async/actions/workflows/python-app.yml/badge.svg)](https://github.com/laisee/client-python-async/actions/workflows/python-app.yml)[![Security Check(Bandit)](https://github.com/laisee/client-python-async/actions/workflows/code-security.yml/badge.svg)](https://github.com/laisee/client-python-async/actions/workflows/code-security.yml)
 # client-python-async
 [Power Trade](power.trade) client for receiving market data updates via async (websocket) channel
 
