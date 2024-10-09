@@ -13,6 +13,7 @@
     ls log
 ```
 - Run the APi client
+<<<<<<< HEAD
 ```shell
     python client.py
 ```
@@ -28,6 +29,16 @@
         "wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price"
     ]
 ```
+=======
+```
+    python client.py
+```
+- Monitor message processing using the log file in /data folder using current UTC data e.g. 'client.2024-10-09.log' for date 09-10-2024
+```
+    tail -f log/client.20241009.log
+```
+- Adjust the endpoints to include/exclude data required. By default all 3 endpoints are listed.
+>>>>>>> ca4e698 (added ruff to req.txt)
 See [here](https://power-trade.github.io/api-docs-source/ws_feeds.html#Market_Feeds_Connection_Parameters) for more details on configuring the target WS endspoints to filter product type (spot, perpertuals, options, ...) and message types (risk, top_of_book, ...)
 
 ## API Endpoints
