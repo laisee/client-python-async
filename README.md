@@ -1,7 +1,29 @@
 # client-python-async
 power.trade client for receiving market data updates via async (websocket) channel
 
-## API Urls
+## Getting Started
+ - Install Python )any version above 3.10)
+ - Install libraries used 
+''''
+    pip install -r requirements.txt
+''''
+- Ensure the data & log folders exist in home/root directory
+''''
+    ls data
+    ls log
+'''' 
+- Run the APi client
+'''
+    python client.py
+'''
+- Monitor message processing using the log file in /data folder using current UTC data e.g. 'client.2024-10-09.log' for date 09-10-2024
+''''
+    tail -f log/client.20241009.log
+''''
+- Adjust the endpoints to include/exclude data required. By default all 3 endpoints are listed.
+See [here](https://power-trade.github.io/api-docs-source/ws_feeds.html#Market_Feeds_Connection_Parameters) for more details on configuring the target WS endspoints to filter product type (spot, perpertuals, options, ...) and message types (risk, top_of_book, ...)
+
+## API Endpoints
 
 ### List of tradeable entities **
 REST: https://api.rest.prod.power.trade/v1/market_data/tradeable_entity/all/summary
