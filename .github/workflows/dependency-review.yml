@@ -1,12 +1,3 @@
-# Dependency Review Action
-#
-# This Action will scan dependency manifest files that change as part of a Pull Request,
-# surfacing known-vulnerable versions of the packages declared or updated in the PR.
-# Once installed, if the workflow run is marked as required, PRs introducing known-vulnerable
-# packages will be blocked from merging.
-#
-# Source repository: https://github.com/actions/dependency-review-action
-# Public documentation: https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review#dependency-review-enforcement
 name: 'Dependency review'
 on:
   push:
@@ -18,15 +9,8 @@ on:
       - main
       - 'release/*'
 
-# If using a dependency submission action in this workflow this permission will need to be set to:
-#
-# permissions:
-#   contents: write
-#
-# https://docs.github.com/en/enterprise-cloud@latest/code-security/supply-chain-security/understanding-your-software-supply-chain/using-the-dependency-submission-api
 permissions:
   contents: read
-  # Write permissions for pull-requests are required for using the `comment-summary-in-pr` option, comment out if you aren't using this option
   pull-requests: write
 
 jobs:
@@ -36,17 +20,14 @@ jobs:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
   
+      # This step will only run on pull_request events
       - name: Run only on pull requests
         if: github.event_name == 'pull_request'
         run: |
           echo "Base ref: ${{ github.event.pull_request.base.ref }}"
           echo "Head ref: ${{ github.event.pull_request.head.ref }}"
-      
+
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v4
-        # Commonly enabled options, see https://github.com/actions/dependency-review-action#configuration-options for all available options.
         with:
           comment-summary-in-pr: always
-        #   fail-on-severity: moderate
-        #   deny-licenses: GPL-1.0-or-later, LGPL-2.0-or-later
-        #   retry-on-snapshot-warnings: true
