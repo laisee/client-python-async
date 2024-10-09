@@ -4,7 +4,7 @@
 
 ## Getting Started
  - Install Python (any version above 3.10)
- - Install libraries used
+ - Install Python libraries used in client.py and other files
 ```shell 
     pip install -r requirements.txt
 ```
