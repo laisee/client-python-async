@@ -14,7 +14,6 @@
     ls log
 ```
 - Run the APi client
-<<<<<<< HEAD
 ```shell
     python client.py
 ```
@@ -30,7 +29,7 @@
         "wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price"
     ]
 ```
-=======
+- Run the python client using installed version of Python
 ```
     python client.py
 ```
@@ -39,27 +38,37 @@
     tail -f log/client.20241009.log
 ```
 - Adjust the endpoints to include/exclude data required. By default all 3 endpoints are listed.
->>>>>>> ca4e698 (added ruff to req.txt)
-See [here](https://power-trade.github.io/api-docs-source/ws_feeds.html#Market_Feeds_Connection_Parameters) for more details on configuring the target WS endspoints to filter product type (spot, perpertuals, options, ...) and message types (risk, top_of_book, ...)
+
+    See [here](https://power-trade.github.io/api-docs-source/ws_feeds.html#Market_Feeds_Connection_Parameters) for more details on configuring the target WS endspoints to filter product type (spot, perpertuals, options, ...) and message types (risk, top_of_book, ...)
 
 ## API Endpoints
 
-### List of tradeable entities **
-REST: https://api.rest.prod.power.trade/v1/market_data/tradeable_entity/all/summary
+### List of tradeable entities
+REST Url: https://api.rest.prod.power.trade/v1/market_data/tradeable_entity/all/summary
 
-### Top of Book **
-WS: wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book
-top_of_book strusture:
-https://power-trade.github.io/api-docs-source/ws_feeds.html#top_of_book
+[Tradeable Entity](https://power-trade.github.io/api-docs-source/rest_api.html#_get_v1market_datatradeable_entityallsummary)
 
-### Last Traded Price **
-WS: wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price
+### Top of Book
+| Environment | URL |
+|-------------|-----|
+| Test | wss://api.wss.test.power.trade/v1/feeds?type[]=top_of_book |
+| Production | wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book |
 
-last_traded_price structure:
-https://power-trade.github.io/api-docs-source/ws_feeds.html#last_trade_price
+[Top of Book data structure](https://power-trade.github.io/api-docs-source/ws_feeds.html#top_of_book)
 
-### Reference Price **
-WS: wss://api.wss.prod.power.trade/v1/feeds?type[]=reference_price,top_of_book
+### Last Traded Price
+| Environment | URL |
+|-------------|-----|
+| Test | wss://api.wss.test.power.trade/v1/feeds?type[]=last_trade_price |
+| Production | wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price |
 
-reference_price structure:
-https://power-trade.github.io/api-docs-source/ws_feeds.html#reference_price
+[Last Trade Price data structure](https://power-trade.github.io/api-docs-source/ws_feeds.html#last_trade_price)
+
+### Reference Price
+
+| Environment | URL |
+|-------------|-----|
+| Test | wss://api.wss.test.power.trade/v1/feeds?type[]=reference_price |
+| Production | wss://api.wss.prod.power.trade/v1/feeds?type[]=reference_price|
+
+[Reference Price data structure](https://power-trade.github.io/api-docs-source/ws_feeds.html#reference_price)
