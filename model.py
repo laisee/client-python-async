@@ -11,7 +11,7 @@ class TopOfBook:
     buy_quantity: str
     sell_price: str
     sell_quantity: str
-    product: str = field(default="")
+    product: str = field(default="NULL")
     buy_price_conv: float = field(default=0.0) 
     buy_quantity_conv: float = field(default=0.0) 
     sell_price_conv: float = field(default=0.0) 
