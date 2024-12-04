@@ -8,7 +8,7 @@ from model import ReferencePrice, LastTradePrice, TopOfBook
 from utility import lookup_conversion_number_by_id # type: ignore
 
 # in-mem store containing all tradeable products @ power.trade
-PRODUCT_CSV_FILE = "data/product.csv"
+PRODUCT_CSV_FILE = "data/tradeable_entity.csv"
 ref_data = None
 
 def load_ref_data(file_path):
@@ -51,14 +51,12 @@ async def process_message(message: str, endpoint: str):
                 # lookup conversion factors for price, quantity based on entity Id
                 price_conversion_factor, quantity_conversion_factor = lookup_conversion_number_by_id(PRODUCT_CSV_FILE, tob.tradeable_entity_id)
 
-                #
                 # assign product to TOB object, convert from internal price, qty to regular amounts
-                #
-                tob.product = product
-                tob.buy_price_conv = float(tob.buy_price) / price_conversion_factor if tob.buy_price != 'none' else 0.00
-                tob.buy_quantity_conv = float(tob.buy_quantity) / quantity_conversion_factor if tob.buy_quantity != 'none' else 0.00
-                tob.sell_price_conv = float(tob.sell_price) / price_conversion_factor if tob.sell_price != 'none' else 0.00
-                tob.sell_quantity_conv = float(tob.sell_quantity) / quantity_conversion_factor if tob.sell_quantity != 'none' else 0.00
+                tob.symbol = product
+                tob.buy_price_conv = float(tob.buy_price) / price_conversion_factor
+                tob.buy_quantity_conv = float(tob.buy_quantity) / quantity_conversion_factor
+                tob.sell_price_conv = float(tob.sell_price) / price_conversion_factor
+                tob.sell_quantity_conv = float(tob.sell_price) / quantity_conversion_factor
                 # 
                 # add code here to process and/or store the TOB record
                 # ...
@@ -76,10 +74,10 @@ async def process_message(message: str, endpoint: str):
                 product = find_product_by_id(ref_price.tradeable_entity_id)
 
                 # lookup conversion factors for price, quantity based on entity Id
-                price_conversion_factor, quantity_conversion_factor = lookup_conversion_number_by_id(PRODUCT_CSV_FILE, tob.tradeable_entity_id)
+                price_conversion_factor, quantity_conversion_factor = lookup_conversion_number_by_id(PRODUCT_CSV_FILE, ref_price.tradeable_entity_id)
 
                 ref_price.product = product
-                ref_price.price_conv = float(ref_price.price) / price_conversion_factor if ref_price.price != 'none' else 0.00
+                ref_price.price_conv = float(ref_price.price) / price_conversion_factor
                 logging.info(f"Received Reference Price for product '{product}' -> {ref_price}") 
                 # 
                 # add code here to process and/or store the Reference Price record
@@ -98,10 +96,10 @@ async def process_message(message: str, endpoint: str):
                 product = find_product_by_id(last_trade_price.tradeable_entity_id)
                 
                 # lookup conversion factors for price, quantity based on entity Id
-                price_conversion_factor, quantity_conversion_factor = lookup_conversion_number_by_id(PRODUCT_CSV_FILE, tob.tradeable_entity_id)
+                price_conversion_factor, quantity_conversion_factor = lookup_conversion_number_by_id(PRODUCT_CSV_FILE, last_trade_price.tradeable_entity_id)
 
                 last_trade_price.product = product
-                last_trade_price.price_conv = float(last_trade_price.price) / price_conversion_factor if last_trade_price.price != 'none' else 0.00
+                last_trade_price.price_conv = float(last_trade_price.price) / price_conversion_factor
                 logging.info(f"Received Last Trade Price for product '{product}' -> {last_trade_price}") 
                 # 
                 # add code here to process and/or store the Last Trade Price record
@@ -153,9 +151,9 @@ async def main():
     # see https://power-trade.github.io/api-docs-source/ws_feeds.html#_hosts for WS specifications
     #
     endpoints = [
-        "wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book"
-        #"wss://api.wss.prod.power.trade/v1/feeds?type[]=reference_price",
-        #"wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price"
+        "wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book",
+        "wss://api.wss.prod.power.trade/v1/feeds?type[]=reference_price",
+        "wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price"
     ]
     
     # Create a task for each WebSocket connection
