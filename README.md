@@ -39,7 +39,7 @@
 ```
 - Adjust the endpoints to include/exclude data required. By default all 3 endpoints are listed.
 
-    See [here](https://power-trade.github.io/api-docs-source/ws_feeds.html#Market_Feeds_Connection_Parameters) for more details on configuring the target WS endspoints to filter product type (spot, perpertuals, options, ...) and message types (risk, top_of_book, ...)
+    See [here](https://power-trade.github.io/api-docs-source/ws_feeds.html#Market_Feeds_Connection_Parameters) for more details on configuring the target WS endspoints to filter product type (spot, perpetuals, options, ...) and message types (risk, top_of_book, ...)
 
 ## API Endpoints
 
