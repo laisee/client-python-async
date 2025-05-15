@@ -1,3 +1,9 @@
+name: CI Workflow
+
+on:
+  push:
+  pull_request:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -5,8 +11,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run only on pull requests
-        if: github.event_name == 'pull_request'
+      - name: Print refs
         run: |
-          echo "Base ref: ${{ github.event.pull_request.base.ref }}"
-          echo "Head ref: ${{ github.event.pull_request.head.ref }}"
+          echo "Event: ${{ github.event_name }}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Base ref: ${{ github.event.pull_request.base.ref }}"
+            echo "Head ref: ${{ github.event.pull_request.head.ref }}"
+          else
+            echo "Branch: ${{ github.ref }}"
+          fi
