@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Optional
 from dataclasses_json import dataclass_json
 
 @dataclass_json
@@ -27,7 +28,6 @@ class ReferencePrice:
     price_type: str
     product: str = field(default="")
     price_conv: float = field(default=0.0)
-    product: str = field(default="")
 
 @dataclass_json
 @dataclass
@@ -39,11 +39,10 @@ class LastTradePrice:
     price_type: str
     product: str = field(default="")
     price_conv: float = field(default=0.0)
-    product: str = field(default="")
 
 @dataclass_json
 @dataclass
 class MarketData:
-    reference_price: ReferencePrice = None
-    top_of_book: TopOfBook = None
-    last_trade_price: LastTradePrice = None
+    reference_price: Optional[ReferencePrice] = None
+    top_of_book: Optional[TopOfBook] = None
+    last_trade_price: Optional[LastTradePrice] = None

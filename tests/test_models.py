@@ -1,7 +1,16 @@
-import pytest
-from dataclasses import asdict
-from model import TopOfBook, ReferencePrice, LastTradePrice, MarketData
 import json
+import sys
+from dataclasses import asdict
+from pathlib import Path
+
+import pytest
+
+# Ensure project root is on the Python path so imports work when running `pytest`
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from model import TopOfBook, ReferencePrice, LastTradePrice, MarketData  # noqa: E402
 
 
 def test_top_of_book_serialization_to_ensure_accuracy():
