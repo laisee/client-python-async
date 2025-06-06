@@ -1,6 +1,5 @@
 import asyncio
 import websockets
-import csv
 import json
 import logging
 from datetime import datetime, timezone
@@ -57,11 +56,13 @@ async def process_message(message: str, endpoint: str):
                 tob.buy_quantity_conv = float(tob.buy_quantity) / quantity_conversion_factor
                 tob.sell_price_conv = float(tob.sell_price) / price_conversion_factor
                 tob.sell_quantity_conv = float(tob.sell_price) / quantity_conversion_factor
-                # 
+                #
                 # add code here to process and/or store the TOB record
                 # ...
-                # 
-                logging.info(f"Received Top Of Book (ask, bid) for product '{product}' -> {tob}") 
+                #
+                logging.info(
+                    f"Received Top Of Book (ask, bid) for product '{product}' -> {tob}"
+                )
             except Exception as e:
                 logging.error(f"Error decoding message {message}: {e}")
 
@@ -83,7 +84,6 @@ async def process_message(message: str, endpoint: str):
                 # add code here to process and/or store the Reference Price record
                 # ...
                 # 
-                logging.info(f"Received Top Of Book (ask, bid) for product '{product}' -> {tob}") 
             except Exception as e:
                 logging.error(f"Error decoding message {message}: {e}")
 
@@ -144,7 +144,7 @@ async def main():
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
-    logging.info("Configured Logger using file '{log_filename}' level '{logging.INFO}'")
+    logging.info(f"Configured Logger using file '{log_filename}' level '{logging.INFO}'")
 
     # 
     # define message types to monitor
