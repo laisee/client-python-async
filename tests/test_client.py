@@ -52,3 +52,51 @@ def test_process_message_top_of_book(monkeypatch, caplog):
     caplog.set_level(logging.INFO)
     asyncio.run(client.process_message(message, "endpoint"))
     assert any("Received Top Of Book" in r.message for r in caplog.records)
+
+
+def test_process_message_reference_price(monkeypatch, caplog):
+    client.ref_data = [{"id": 1, "symbol": "BTC"}]
+    monkeypatch.setattr(client, "lookup_conversion_number_by_id", lambda *a, **k: (1, 1))
+    message = json.dumps({
+        "reference_price": {
+            "timestamp": "ts",
+            "tradeable_entity_id": "1",
+            "market_id": "m",
+            "price": "10",
+            "price_type": "type"
+        }
+    })
+    caplog.clear()
+    caplog.set_level(logging.INFO)
+    asyncio.run(client.process_message(message, "endpoint"))
+    assert any("Received Reference Price" in r.message for r in caplog.records)
+
+
+def test_process_message_last_trade_price(monkeypatch, caplog):
+    client.ref_data = [{"id": 1, "symbol": "BTC"}]
+    monkeypatch.setattr(client, "lookup_conversion_number_by_id", lambda *a, **k: (1, 1))
+    message = json.dumps({
+        "last_trade_price": {
+            "timestamp": "ts",
+            "tradeable_entity_id": "1",
+            "market_id": "m",
+            "price": "10",
+            "price_type": "type"
+        }
+    })
+    caplog.clear()
+    caplog.set_level(logging.INFO)
+    asyncio.run(client.process_message(message, "endpoint"))
+    assert any("Received Last Trade Price" in r.message for r in caplog.records)
+
+
+def test_process_message_invalid_json(caplog):
+    caplog.set_level(logging.ERROR)
+    asyncio.run(client.process_message("{invalid}", "endpoint"))
+    assert any("Error decoding message" in r.message or "Error decoding message" in r.getMessage() for r in caplog.records)
+
+
+def test_process_message_unknown_message(caplog):
+    caplog.set_level(logging.WARNING)
+    asyncio.run(client.process_message('{"foo": 1}', "endpoint"))
+    assert any("Unknown message type" in r.message for r in caplog.records)
