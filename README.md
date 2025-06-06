@@ -4,11 +4,11 @@
 
 ## Getting Started
  - Install Python (any version above 3.10)
- - Install Python libraries used in client.py and other files
-```shell 
-    pip install -r requirements.txt
+ - Install project dependencies using Poetry
+```shell
+    poetry install
 ```
-- Ensure the data & log folders exist in home/root directory
+ - Ensure the `data` and `log` folders exist in your working directory. The data files provide product mappings (`ref_data.json`) and conversion factors (`tradeable_entity.csv`).
 ```shell
     ls data
     ls log
@@ -21,13 +21,9 @@
 ```shell
     tail -f log/client.20241009.log
 ```
-- Adjust the endpoints in client.py to include/exclude data required. By default all 3 endpoints are listed.
-```python
-    endpoints = [
-        "wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book"
-        "wss://api.wss.prod.power.trade/v1/feeds?type[]=reference_price",
-        "wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price"
-    ]
+ - Configure endpoints via the `WS_ENDPOINTS` environment variable. If unset the client connects to all feeds by default.
+```shell
+    export WS_ENDPOINTS="wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book"
 ```
 - Run the python client using installed version of Python
 ```

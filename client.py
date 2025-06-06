@@ -2,15 +2,18 @@ import asyncio
 import websockets
 import json
 import logging
+import os
 from datetime import datetime, timezone
 from model import ReferencePrice, LastTradePrice, TopOfBook
 from utility import lookup_conversion_number_by_id # type: ignore
 
 # in-mem store containing all tradeable products @ power.trade
 PRODUCT_CSV_FILE = "data/tradeable_entity.csv"
-ref_data = None
+ref_data: list[dict] | None = None
 
-def load_ref_data(file_path):
+from typing import Any, List
+
+def load_ref_data(file_path: str) -> List[dict[str, Any]]:
     #
     # file is an array of json objects
     # latest version can be downloaded from 'https://api.rest.prod.power.trade/v1/market_data/tradeable_entity/all/summary'
@@ -20,7 +23,7 @@ def load_ref_data(file_path):
         assert len(data) > 0, f"Error - ref data from file {file_path} must have > 0 rows"
     return data
 
-def find_product_by_id(entity_id: str):
+def find_product_by_id(entity_id: str) -> str:
     product = "Unknown"
     if ref_data is None:
         logging.error("No Reference data loaded")
@@ -31,7 +34,7 @@ def find_product_by_id(entity_id: str):
             break
     return product
 
-async def process_message(message: str, endpoint: str):
+async def process_message(message: str, endpoint: str) -> None:
     try:
         logging.info(f"Received message: {message}")
         data = json.loads(message)
@@ -51,7 +54,7 @@ async def process_message(message: str, endpoint: str):
                 price_conversion_factor, quantity_conversion_factor = lookup_conversion_number_by_id(PRODUCT_CSV_FILE, tob.tradeable_entity_id)
 
                 # assign product to TOB object, convert from internal price, qty to regular amounts
-                tob.symbol = product
+                tob.product = product
                 tob.buy_price_conv = float(tob.buy_price) / price_conversion_factor
                 tob.buy_quantity_conv = float(tob.buy_quantity) / quantity_conversion_factor
                 tob.sell_price_conv = float(tob.sell_price) / price_conversion_factor
@@ -112,24 +115,30 @@ async def process_message(message: str, endpoint: str):
     except json.JSONDecodeError as e:
         logging.error(f"Error decoding message from {endpoint}: {e}")
 
-async def listen_to_endpoint(endpoint: str):
-   while True:
+async def listen_to_endpoint(endpoint: str, max_retries: int = 5) -> None:
+   retries = 0
+   while retries < max_retries:
         try:
             async with websockets.connect(endpoint, ping_interval=10, ping_timeout=20) as websocket:
                 logging.info(f"Connected to {endpoint}")
+                retries = 0
                 async for message in websocket:
                     await process_message(message, endpoint)
         except websockets.exceptions.ConnectionClosedError as e:
-            logging.error(f"Connection closed with error: {e}. Reconnecting in 5 seconds...")
-            await asyncio.sleep(5)  # Wait and then attempt to reconnect
+            retries += 1
+            logging.error(f"Connection closed with error: {e}. Retry {retries}/{max_retries}")
+            await asyncio.sleep(5)
         except websockets.exceptions.ConnectionClosedOK:
             logging.info(f"Connection to {endpoint} closed cleanly.")
-            break  # Exit the loop if the connection was closed cleanly
+            break
         except Exception as e:
-            logging.error(f"Unexpected error: {e}. Reconnecting in 5 seconds...")
+            retries += 1
+            logging.error(f"Unexpected error: {e}. Retry {retries}/{max_retries}")
             await asyncio.sleep(5)
+   if retries >= max_retries:
+        logging.error(f"Max retries exceeded for {endpoint}. Giving up.")
 
-async def main():
+async def main() -> None:
 
     # setup current log file details to use within async code 
     current_date = datetime.now(timezone.utc).strftime('%Y%m%d')
@@ -140,21 +149,29 @@ async def main():
     # 
     logging.basicConfig(
         filename=log_filename,
-        level=logging.INFO,  # Log level set to INFO; adjust as needed
+        level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logging.getLogger('').addHandler(console_handler)
     logging.info(f"Configured Logger using file '{log_filename}' level '{logging.INFO}'")
 
     # 
     # define message types to monitor
     # see https://power-trade.github.io/api-docs-source/ws_feeds.html#_hosts for WS specifications
     #
-    endpoints = [
-        "wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book",
-        "wss://api.wss.prod.power.trade/v1/feeds?type[]=reference_price",
-        "wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price"
-    ]
+    env_endpoints = os.getenv("WS_ENDPOINTS")
+    if env_endpoints:
+        endpoints = [e.strip() for e in env_endpoints.split(',') if e.strip()]
+    else:
+        endpoints = [
+            "wss://api.wss.prod.power.trade/v1/feeds?type[]=top_of_book",
+            "wss://api.wss.prod.power.trade/v1/feeds?type[]=reference_price",
+            "wss://api.wss.prod.power.trade/v1/feeds?type[]=last_trade_price",
+        ]
     
     # Create a task for each WebSocket connection
     tasks = [listen_to_endpoint(endpoint) for endpoint in endpoints]
