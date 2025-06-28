@@ -1,17 +1,17 @@
 import asyncio
-import websockets
 import json
 import logging
 import os
 from datetime import datetime, timezone
-from model import ReferencePrice, LastTradePrice, TopOfBook
-from utility import lookup_conversion_number_by_id # type: ignore
+from typing import Any, List
+
+import websockets
+from model import LastTradePrice, ReferencePrice, TopOfBook
+from utility import lookup_conversion_number_by_id  # type: ignore
 
 # in-mem store containing all tradeable products @ power.trade
 PRODUCT_CSV_FILE = "data/tradeable_entity.csv"
 ref_data: list[dict] | None = None
-
-from typing import Any, List
 
 def load_ref_data(file_path: str) -> List[dict[str, Any]]:
     #
